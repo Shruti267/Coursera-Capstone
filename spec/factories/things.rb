@@ -14,6 +14,15 @@ FactoryGirl.define do
       end
     end
 
+    trait :with_type do
+      transient do
+        type_count 1
+      end
+      after(:build) do |thing, props|
+        thing.thing_types << build_list(:thing_type, props.type_count, :thing=>thing)
+      end
+    end
+
     trait :with_fields do
       description { Faker::Lorem.paragraphs.join }
       notes       { Faker::Lorem.paragraphs.join }

@@ -34,13 +34,14 @@ group :development, :test do
   gem 'chromedriver-helper', '~>1.0', '>=1.0.0'
   gem 'launchy', '~>2.4', '>=2.4.3'
   gem 'simplecov', '~>0', '>=0.12', :require=>false
+  gem 'figaro'
 end
 
 group :production do
   gem 'rails_12factor', '~>0.0', '>= 0.0.3'
 end
 
-gem 'pg', '~>0.19', '>=0.19.0'
+gem 'pg', '~>0.20.0'
 gem 'puma', '~>3.6', '>=3.6.0', :platforms=>:ruby
 gem 'mongoid', '~>5.1', '>=5.1.5'
 gem 'database_cleaner', '~>1.5', '>=1.5.3'

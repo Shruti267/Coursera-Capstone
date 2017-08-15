@@ -17,3 +17,6 @@
 /bower_components
 /node_modules
 /coverage
+
+# Ignore application configuration
+/config/application.yml
