@@ -50,8 +50,8 @@ RSpec.feature "Authns", type: :feature, :js=>true do
         expect(page).to have_css("#signup-form > span.invalid",
                                  :text=>"Password is too short")
         expect(page).to have_css("#signup-form > span.invalid",
-                                 :text=>"Email already in use")
-        expect(page).to have_css("#signup-email span.invalid",:text=>"already in use")
+                                 :text=>"Email has already been taken")
+        expect(page).to have_css("#signup-email span.invalid",:text=>"has already been taken")
         expect(page).to have_css("#signup-password span.invalid",:text=>"too short")
         within("#signup-password_confirmation") do
           expect(page).to have_css("span.invalid",:text=>"doesn't match")
@@ -190,7 +190,7 @@ RSpec.feature "Authns", type: :feature, :js=>true do
       checkme
       within ("div.checkme-user") do
         expect(page).to have_no_css("label", :text=>/#{user_props[:name]}/)
-        expect(page).to have_css("label", :text=>/Authorized users only/,:wait=>5)
+        expect(page).to have_css("label", :text=>/You need to sign in or sign up before continuing./,:wait=>5)
       end
     end
   end
