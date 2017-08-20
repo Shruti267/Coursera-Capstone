@@ -32,10 +32,11 @@ class ThingImagesController < ApplicationController
   end
 
   def create
-    thing_image = ThingImage.new(thing_image_create_params.merge({
-                                  :image_id=>params[:image_id],
-                                  :thing_id=>params[:thing_id],
-                                  }))
+    thing_image = ThingImage.new(thing_image_create_params.merge(
+        {
+          :image_id=>params[:image_id],
+          :thing_id=>params[:thing_id],
+        }))
     thing=Thing.where(id:thing_image.thing_id).first
     if !thing
       full_message_error "cannot find thing[#{params[:thing_id]}]", :bad_request

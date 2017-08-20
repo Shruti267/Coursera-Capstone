@@ -54,7 +54,7 @@ namespace :ptourist do
     image=Image.create(:creator_id=>organizer.id,:caption=>img[:caption])
     organizer.add_role(Role::ORGANIZER, image).save
   end
-  def create_thing thing, organizer, members, images
+  def create_thing thing, organizer, members, images, type_ids=[]
     thing=Thing.create!(thing)
     organizer.add_role(Role::ORGANIZER, thing).save
     m=members.map { |member|
@@ -73,6 +73,23 @@ namespace :ptourist do
                      :creator_id=>organizer.id)
                 .tap {|ti| ti.priority=img[:priority] if img[:priority]}.save!
     end
+    type_ids.each do |type_id|
+      type=Type.find(type_id)
+      unless type.nil?
+        puts "building type for #{thing.name}, #{type[:name]}, by #{organizer.name}"
+        puts "step 1"
+        organizer.add_role(Role::ORGANIZER, type).save
+        puts "step 2"
+        ThingType.new(:thing=>thing, :type=>type,
+                      :creator_id=>organizer.id).save
+        #     .tap {|tt| tt.is_vip_pass_required=true}.save!
+      end
+    end
+  end
+  def create_type organizer, type
+    puts "building type for #{type[:name]}, by #{organizer.name}"
+    type=Type.create(:name=>type[:name],:notes=>type[:notes], :creator_id=>organizer[:id])
+    organizer.add_role(Role::ORIGINATOR, type).save
   end
 
   desc "reset all data"
@@ -114,9 +131,36 @@ namespace :ptourist do
     puts "users:#{User.pluck(:name)}"
   end
 
-  desc "reset things, images, and links" 
+  desc "reset things, images, types, and links"
   task subjects: [:users] do
-    puts "creating things, images, and links"
+    puts "creating things, images, types, and links"
+
+    organizer=get_user("alice")
+    type={
+        :name=>"Dune buggy rental",
+        :notes=>"Dune buggy rentals require a driver's license."
+    }
+    create_type organizer, type
+
+    organizer=get_user("carol")
+    type={
+        :name=>"Jet ski rental",
+        :notes=>"Jet skis are only available on the weekend."
+    }
+    create_type organizer, type
+
+    organizer=get_user("alice")
+    type={
+        :name=>"Hat rental"
+    }
+    create_type organizer, type
+
+    organizer=get_user("carol")
+    type={
+        :name=>"Scooter rental",
+        :notes=>"Scooters can only carry one person."
+    }
+    create_type organizer, type
 
     thing={:name=>"B&O Railroad Museum",
     :description=>"Discover your adventure at the B&O Railroad Museum in Baltimore, Maryland. Explore 40 acres of railroad history at the birthplace of American railroading. See, touch, and hear the most important American railroad collection in the world! Seasonal train rides for all ages.",
@@ -138,7 +182,8 @@ namespace :ptourist do
      :lng=>-76.6327453,
      :lat=>39.2854217},
     ]
-    create_thing thing, organizer, members, images
+    type_ids=[1, 2]
+    create_thing thing, organizer, members, images, type_ids
 
     thing={:name=>"Baltimore Water Taxi",
     :description=>"The Water Taxi is more than a jaunt across the harbor; it’s a Baltimore institution and a way of life. Every day, thousands of residents and visitors not only rely on us to take them safely to their destinations, they appreciate our knowledge of the area and our courteous service. And every day, hundreds of local businesses rely on us to deliver customers to their locations.  We know the city. We love the city. We keep the city moving. We help keep businesses thriving. And most importantly, we offer the most unique way to see Baltimore and provide an unforgettable experience that keeps our passengers coming back again and again.",

@@ -5,20 +5,42 @@ class ApplicationPolicy
     @user = user
     @record = record
   end
-  def organizer_or_admin?
-    @user.has_role([Role::ADMIN, Role::ORGANIZER], @record.model_name.name, @record.id)
-  end
-  def organizer?
-    @user.has_role([Role::ORGANIZER], @record.model_name.name, @record.id)
-  end
-  def member_or_organizer?
-    @user.has_role([Role::MEMBER,Role::ORGANIZER], @record.model_name.name, @record.id)
-  end
+
   def member?
     @user.has_role([Role::MEMBER], @record.model_name.name, @record.id)
   end
+
+  def member_or_organizer?
+    @user.has_role([Role::MEMBER,Role::ORGANIZER], @record.model_name.name, @record.id)
+  end
+
   def originator?
     @user.has_role([Role::ORIGINATOR], @record.name)
+  end
+
+  def organizer?
+    @user.has_role([Role::ORGANIZER], @record.model_name.name, @record.id)
+  end
+
+  def organizer_or_admin?
+    @user.has_role([Role::ADMIN, Role::ORGANIZER], @record.model_name.name, @record.id)
+  end
+
+  def type_originator?
+    if @record.model_name.nil?
+      @user.has_role([Role::ORIGINATOR], @record.name)
+    else
+      @user.has_role([Role::ORIGINATOR], @record.model_name.name)
+    end
+  end
+
+  def type_originator_or_admin?
+    @user.has_role([Role::ADMIN, Role::ORIGINATOR], @record.name)
+    if @record.model_name.nil?
+      @user.has_role([Role::ADMIN, Role::ORIGINATOR], @record.name)
+    else
+      @user.has_role([Role::ADMIN, Role::ORIGINATOR], @record.model_name.name)
+    end
   end
 
   def index?
