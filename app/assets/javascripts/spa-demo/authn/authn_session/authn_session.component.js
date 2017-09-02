@@ -14,8 +14,8 @@
     return APP_CONFIG.authn_session_html;
   }    
 
-  AuthnSessionController.$inject = ["$scope","spa-demo.authn.Authn"];
-  function AuthnSessionController($scope, Authn) {
+  AuthnSessionController.$inject = ["$scope","$state","spa-demo.authn.Authn"];
+  function AuthnSessionController($scope, $state, Authn) {
     var vm=this;
     vm.loginForm = {}
     vm.login = login;
@@ -47,6 +47,7 @@
       Authn.logout().then(
         function(){
           vm.dropdown.removeClass("open");
+          $state.go("home");
         });
     }    
 

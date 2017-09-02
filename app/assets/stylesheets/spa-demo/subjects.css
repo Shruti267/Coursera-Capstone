@@ -1,13 +1,9 @@
-
-form.thing-form .id,
-div.thing-list .id,
-form.image-form .id,
-div.image-list .id {
+div.image-list .id,  div.thing-list .id,  div.type-list .id,
+form.image-form .id, form.thing-form .id, form.type-form .id {
   display: none;
 }
 
-sd-image-editor form,
-sd-thing-editor form {
+sd-image-editor form, sd-thing-editor form, sd-type-editor form {
   padding-left: 15px;
   padding-right: 15px;
 }

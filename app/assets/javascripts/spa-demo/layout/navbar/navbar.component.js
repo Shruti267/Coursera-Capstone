@@ -18,6 +18,7 @@
   function NavbarController($scope, Authn) {
     var vm=this;
     vm.getLoginLabel = getLoginLabel;
+    vm.isTypeMenuVisible = isTypeMenuVisible;
 
     vm.$onInit = function() {
       console.log("NavbarController",$scope);
@@ -26,6 +27,10 @@
     //////////////
     function getLoginLabel() {
       return Authn.isAuthenticated() ? Authn.getCurrentUserName() : "Login";
+    }
+
+    function isTypeMenuVisible () {
+      return Authn.isAuthenticated();
     }
   }
 })();

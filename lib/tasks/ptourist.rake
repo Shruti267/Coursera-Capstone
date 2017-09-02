@@ -73,23 +73,23 @@ namespace :ptourist do
                      :creator_id=>organizer.id)
                 .tap {|ti| ti.priority=img[:priority] if img[:priority]}.save!
     end
-    type_ids.each do |type_id|
-      type=Type.find(type_id)
-      unless type.nil?
-        puts "building type for #{thing.name}, #{type[:name]}, by #{organizer.name}"
-        puts "step 1"
-        organizer.add_role(Role::ORGANIZER, type).save
-        puts "step 2"
-        ThingType.new(:thing=>thing, :type=>type,
-                      :creator_id=>organizer.id).save
-        #     .tap {|tt| tt.is_vip_pass_required=true}.save!
-      end
-    end
+    # type_ids.each do |type_id|
+    #   type=Type.find(type_id)
+    #   unless type.nil?
+    #     puts "building type for #{thing.name}, #{type[:name]}, by #{organizer.name}"
+    #     puts "step 1"
+    #     organizer.add_role(Role::ORGANIZER, type).save
+    #     puts "step 2"
+    #     ThingType.new(:thing=>thing, :type=>type,
+    #                   :creator_id=>organizer.id).save
+    #     #     .tap {|tt| tt.is_vip_pass_required=true}.save!
+    #   end
+    # end
   end
   def create_type organizer, type
     puts "building type for #{type[:name]}, by #{organizer.name}"
     type=Type.create(:name=>type[:name],:notes=>type[:notes], :creator_id=>organizer[:id])
-    organizer.add_role(Role::ORIGINATOR, type).save
+    organizer.add_role(Role::ORGANIZER, type).save
   end
 
   desc "reset all data"
@@ -126,6 +126,7 @@ namespace :ptourist do
 
     originator_users.each do |user|
       user.add_role(Role::ORIGINATOR, Thing).save
+      user.add_role(Role::ORIGINATOR, Type).save
     end
 
     puts "users:#{User.pluck(:name)}"

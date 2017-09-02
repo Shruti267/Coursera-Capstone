@@ -22,17 +22,31 @@
       return Authz.isAuthenticated();
     };
 
-      //add custom definitions
+    //add custom definitions
     ThingsAuthz.prototype.canAddImage=function(thing) {
         return Authz.isMember(thing);
     };
+
     ThingsAuthz.prototype.canUpdateImage=function(thing) {
         return Authz.isOrganizer(thing)
     };
+
     ThingsAuthz.prototype.canRemoveImage=function(thing) {
         return Authz.isOrganizer(thing) || Authz.isAdmin();
     };
-    
+
+    ThingsAuthz.prototype.canAddType=function(thing) {
+        return Authz.isMember(thing);
+    };
+
+    ThingsAuthz.prototype.canUpdateType=function(thing) {
+        return Authz.isOrganizer(thing)
+    };
+
+    ThingsAuthz.prototype.canRemoveType=function(thing) {
+        return Authz.isOrganizer(thing) || Authz.isAdmin();
+    };
+
     return new ThingsAuthz();
   }
 })();

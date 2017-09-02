@@ -54,7 +54,9 @@
         vm.authz.canDelete      = false;
         vm.authz.canGetDetails  = false;
         vm.authz.canUpdateImage = false;
-        vm.authz.canRemoveImage = false;      
+        vm.authz.canRemoveImage = false;
+        vm.authz.canUpdateType  = false;
+        vm.authz.canRemoveType  = false;
         item.$promise.then(function(){ checkAccess(item); });
       } else {
         checkAccess(item);
@@ -62,11 +64,13 @@
     }
 
     function checkAccess(item) {
-      vm.authz.canUpdate     = ThingsAuthz.canUpdate(item);
-      vm.authz.canDelete     = ThingsAuthz.canDelete(item);
-      vm.authz.canGetDetails = ThingsAuthz.canGetDetails(item);
+      vm.authz.canUpdate      = ThingsAuthz.canUpdate(item);
+      vm.authz.canDelete      = ThingsAuthz.canDelete(item);
+      vm.authz.canGetDetails  = ThingsAuthz.canGetDetails(item);
       vm.authz.canUpdateImage = ThingsAuthz.canUpdateImage(item);
-      vm.authz.canRemoveImage = ThingsAuthz.canRemoveImage(item);      
+      vm.authz.canRemoveImage = ThingsAuthz.canRemoveImage(item);
+      vm.authz.canUpdateType  = ThingsAuthz.canUpdateType(item);
+      vm.authz.canRemoveType  = ThingsAuthz.canRemoveType(item);
       console.log("checkAccess", item, vm.authz);
     }
 

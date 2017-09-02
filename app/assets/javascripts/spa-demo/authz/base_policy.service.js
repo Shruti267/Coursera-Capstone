@@ -23,7 +23,7 @@
       return Authz.isAuthenticated();
     }
     BasePolicy.prototype.canCreate = function() {
-      //console.log("BasePolicy.canCreate");
+      console.log("BasePolicy.canCreate", this.resourceName, Authz.isOriginator(this.resourceName));
       return Authz.isOriginator(this.resourceName);
     };
     BasePolicy.prototype.canQuery = function() {
@@ -40,7 +40,7 @@
     };
     BasePolicy.prototype.canDelete = function(item) {
       //console.log("BasePolicy.canDelete", item);
-      return (item && item.id && (this.canUpdate(item) || Authz.isAdmin())) == true;
+      return (item != null && item.id != null && (this.canUpdate(item) || Authz.isAdmin())) == true;
     };
     BasePolicy.prototype.canGetDetails = function(item) {
       //console.log("BasePolicy.canGetDetails", item);
