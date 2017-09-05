@@ -332,14 +332,7 @@ RSpec.feature "AuthzThings", type: :feature, js:true do
         end
 
         logout
-        within("sd-thing-editor .thing-form") do
-          expect(page).to have_field("thing-name", :with=>thing.name, 
-                                                   :readonly=>true)
-          expect(page).to have_field("thing-desc", :with=>thing.description, 
-                                                   :readonly=>true)
-          expect(page).to have_no_field("thing-notes")
-          expect(page).to have_no_css("button");
-        end
+        expect(page).to have_content("Sample App (from spa-demo/pages/main.html)")
       end
     end
 

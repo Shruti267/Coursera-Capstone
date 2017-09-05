@@ -35,8 +35,8 @@
         return Authz.isOrganizer(thing) || Authz.isAdmin();
     };
 
-    ThingsAuthz.prototype.canAddType=function(thing) {
-        return Authz.isMember(thing);
+    ThingsAuthz.prototype.canQueryTypes=function() {
+        return Authz.isAuthenticated();
     };
 
     ThingsAuthz.prototype.canUpdateType=function(thing) {

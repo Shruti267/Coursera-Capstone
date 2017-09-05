@@ -73,22 +73,38 @@
       var itemId = thingId ? thingId : vm.item.id;      
       console.log("re/loading thing", itemId);
       vm.images = ThingImage.query({thing_id:itemId});
-      vm.types = ThingType.query({ thing_id: itemId });
+      vm.types = [];
+      if (Authz.isAuthenticated()) {
+        vm.types = ThingType.query({thing_id: itemId});
+      }
+
       vm.item = Thing.get({id:itemId});
       vm.thingsAuthz.newItem(vm.item);
+
       vm.images.$promise.then(
         function(){
           angular.forEach(vm.images, function(ti){
             ti.originalPriority = ti.priority;            
           });                     
         });
-      vm.types.$promise.then(
-        function(){
-            angular.forEach(vm.types, function(tt){
-                tt.originalIsVipPassRequired = tt.is_vip_pass_required;
-            });
-        });
-      $q.all([vm.item.$promise,vm.images.$promise,,vm.types.$promise]).catch(handleError);
+
+
+      var promises = [];
+      promises.push(vm.item.$promise);
+      promises.push(vm.images.$promise);
+
+      if (Authz.isAuthenticated()) {
+          vm.types.$promise.then(
+              function () {
+                  angular.forEach(vm.types, function (tt) {
+                      tt.originalIsVipPassRequired = tt.is_vip_pass_required;
+                  });
+              });
+
+          promises.push(vm.types.$promise);
+      }
+
+      $q.all(promises).catch(handleError);
     }
 
     function haveDirtyImageLinks() {
@@ -128,11 +144,43 @@
       $state.go(".",{id: null});    
     }
 
-    function update() {      
+    function update() {
+      console.log("updating thing");
       vm.item.errors = null;
       var update=vm.item.$update();
-      updateImageLinks(update);
-      updateTypeLinks(update);
+      updateImageAndTypeLinks(update);
+    }
+
+    function updateImageAndTypeLinks(promise) {
+        console.log("updating links to images");
+        var promises = [];
+        if (promise) { promises.push(promise); }
+
+        angular.forEach(vm.images, function(ti){
+            if (ti.toRemove) {
+                promises.push(ti.$remove());
+            } else if (ti.originalPriority != ti.priority) {
+                promises.push(ti.$update());
+            }
+        });
+
+        angular.forEach(vm.types, function(tt) {
+            if (tt.toRemove) {
+                promises.push(tt.$remove());
+            } else if (tt.originalIsVipPassRequired != tt.is_vip_pass_required) {
+                promises.push(tt.$update());
+            }
+        });
+
+        console.log("waiting for promises", promises);
+        $q.all(promises).then(
+            function(response){
+                console.log("promise.all response", response);
+                //update button will be disabled when not $dirty
+                $scope.thingform.$setPristine();
+                reload();
+            },
+            handleError);
     }
 
     function updateImageLinks(promise) {

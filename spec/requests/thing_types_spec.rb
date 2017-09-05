@@ -64,6 +64,14 @@ RSpec.describe "ThingTypes", type: :request do
     end
   end
 
+  shared_examples "cannot get links for Thing" do |status=:unauthorized|
+    it do
+      jget thing_thing_types_path(linked_thing_id)
+      #pp parsed_body
+      expect(response).to have_http_status(status)
+    end
+  end
+
   shared_examples "can get links for Type" do
     it do
       jget type_thing_types_path(linked_type_id)
@@ -100,6 +108,7 @@ RSpec.describe "ThingTypes", type: :request do
       end
     end
   end
+
   shared_examples "can create link" do
     it "link from Thing to Type" do
       jpost thing_thing_types_path(linked_thing_id), thing_type_props
@@ -144,14 +153,14 @@ RSpec.describe "ThingTypes", type: :request do
     end
   end
 
-  shared_examples "cannot create link" do |status|
+  shared_examples "cannot create link" do |status=:unauthorized|
     it do
       jpost thing_thing_types_path(linked_thing_id), thing_type_props
       expect(response).to have_http_status(status)
     end
   end
 
-  shared_examples "cannot update link" do |status|
+  shared_examples "cannot update link" do |status=:unauthorized|
     it do
       jput thing_thing_type_path(thing_type["thing_id"], thing_type["id"]),
            thing_type.merge("is_vip_pass_required"=>true)
@@ -159,7 +168,7 @@ RSpec.describe "ThingTypes", type: :request do
     end
   end
 
-  shared_examples "cannot delete link" do |status|
+  shared_examples "cannot delete link" do |status=:unauthorized|
     it do
       jdelete thing_thing_type_path(thing_type["thing_id"], thing_type["id"])
       expect(response).to have_http_status(status)
@@ -196,8 +205,11 @@ RSpec.describe "ThingTypes", type: :request do
     end
 
     context "user is anonymous" do
-      before(:each) { logout }
-      it_should_behave_like "can get links for Thing"
+      before(:each) {
+        thing_type
+        logout
+      }
+      it_should_behave_like "cannot get links for Thing", :unauthorized
       it_should_behave_like "cannot get links for Type", :unauthorized
       it_should_behave_like "cannot create link", :unauthorized
       it_should_behave_like "cannot update link", :unauthorized

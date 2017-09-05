@@ -5,7 +5,7 @@ class ThingTypesController < ApplicationController
   before_action :get_thing, only: [:index, :update, :destroy]
   before_action :get_type, only: [:type_things]
   before_action :get_thing_type, only: [:update, :destroy]
-  before_action :authenticate_user!, only: [:type_things, :create, :update, :destroy]
+  before_action :authenticate_user!, only: [:index, :type_things, :create, :update, :destroy]
   after_action :verify_authorized
 
   def index

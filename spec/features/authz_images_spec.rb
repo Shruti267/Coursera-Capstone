@@ -135,11 +135,10 @@ RSpec.feature "AuthzImages", type: :feature, js:true do
       end
       #verify exists on server after page refresh following logout
       logout
-      within("sd-image-selector .image-list") do
-        expect(page).to have_css("li a", :text=>/^#{new_caption}/, :wait=>5)
-      end
+      expect(page).to have_content("Sample App (from spa-demo/pages/main.html)")
     end
   end
+
   shared_examples "can delete image" do
     it "image deleted" do
       within("sd-image-editor .image-form") do

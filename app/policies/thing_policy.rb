@@ -40,7 +40,7 @@ class ThingPolicy < ApplicationPolicy
   end
 
   def get_types?
-    true
+    @user
   end
 
   def add_type?
