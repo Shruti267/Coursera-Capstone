@@ -36,16 +36,18 @@
                                    "$state","$stateParams",
                                    "spa-demo.authz.Authz",
                                    "spa-demo.subjects.Thing",
-                                   "spa-demo.subjects.ThingImage"];
-  function ThingEditorController($scope, $q, $state, $stateParams, 
-                                 Authz, Thing, ThingImage) {
+                                   "spa-demo.subjects.ThingImage",
+                                   "spa-demo.subjects.ThingType"];
+  function ThingEditorController($scope, $q, $state, $stateParams, Authz, Thing, ThingImage, ThingType) {
     var vm=this;
     vm.create = create;
     vm.clear  = clear;
     vm.update  = update;
     vm.remove  = remove;
-    vm.haveDirtyLinks = haveDirtyLinks;
+    vm.haveDirtyImageLinks = haveDirtyImageLinks;
+    vm.haveDirtyTypeLinks = haveDirtyTypeLinks;
     vm.updateImageLinks = updateImageLinks;
+    vm.updateTypeLinks = updateTypeLinks;
 
     vm.$onInit = function() {
       console.log("ThingEditorController",$scope);
@@ -71,6 +73,7 @@
       var itemId = thingId ? thingId : vm.item.id;      
       console.log("re/loading thing", itemId);
       vm.images = ThingImage.query({thing_id:itemId});
+      vm.types = ThingType.query({ thing_id: itemId });
       vm.item = Thing.get({id:itemId});
       vm.thingsAuthz.newItem(vm.item);
       vm.images.$promise.then(
@@ -79,19 +82,38 @@
             ti.originalPriority = ti.priority;            
           });                     
         });
-      $q.all([vm.item.$promise,vm.images.$promise]).catch(handleError);
+      vm.types.$promise.then(
+        function(){
+            angular.forEach(vm.types, function(tt){
+                tt.originalIsVipPassRequired = tt.is_vip_pass_required;
+            });
+        });
+      $q.all([vm.item.$promise,vm.images.$promise,,vm.types.$promise]).catch(handleError);
     }
-    function haveDirtyLinks() {
+
+    function haveDirtyImageLinks() {
       for (var i=0; vm.images && i<vm.images.length; i++) {
         var ti=vm.images[i];
         if (ti.toRemove || ti.originalPriority != ti.priority) {
           return true;
         }        
       }
-      return false;
-    }    
 
-    function create() {      
+      return false;
+    }
+
+      function haveDirtyTypeLinks() {
+          for (var i=0; vm.types && i<vm.types.length; i++) {
+              var tt=vm.types[i];
+              if (tt.toRemove || tt.originalIsVipPassRequired != tt.is_vip_pass_required) {
+                  return true;
+              }
+          }
+
+          return false;
+      }
+
+    function create() {
       vm.item.errors = null;
       vm.item.$save().then(
         function(){
@@ -110,7 +132,9 @@
       vm.item.errors = null;
       var update=vm.item.$update();
       updateImageLinks(update);
+      updateTypeLinks(update);
     }
+
     function updateImageLinks(promise) {
       console.log("updating links to images");
       var promises = [];
@@ -134,7 +158,30 @@
         handleError);    
     }
 
-    function remove() {      
+    function updateTypeLinks(promise) {
+      console.log("updating links to types");
+      var promises = [];
+      if (promise) { promises.push(promise); }
+      angular.forEach(vm.types, function(tt) {
+        if (tt.toRemove) {
+          promises.push(tt.$remove());
+        } else if (tt.originalIsVipPassRequired != tt.is_vip_pass_required) {
+          promises.push(tt.$update());
+        }
+      });
+
+      console.log("waiting for promises", promises);
+      $q.all(promises).then(
+        function(response){
+          console.log("promise.all response", response);
+          //update button will be disabled when not $dirty
+          $scope.thingform.$setPristine();
+          reload();
+        },
+        handleError);
+    }
+
+    function remove() {
       vm.item.$remove().then(
         function(){
           console.log("thing.removed", vm.item);
