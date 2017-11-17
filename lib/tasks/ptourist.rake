@@ -170,14 +170,14 @@ namespace :ptourist do
         :name=>"Jet ski rental",
         :notes=>"Jet skis are only available on the weekend."
     }
-    create_type organizer, type
+    type_jet_ski_rental=create_type organizer, type
 
     organizer=get_user("carol")
     type={
         :name=>"Scooter rental",
         :notes=>"Scooters can only carry one person."
     }
-    create_type organizer, type
+    type_scooter_rental=create_type organizer, type
 
     thing={:name=>"B&O Railroad Museum",
     :description=>"Discover your adventure at the B&O Railroad Museum in Baltimore, Maryland. Explore 40 acres of railroad history at the birthplace of American railroading. See, touch, and hear the most important American railroad collection in the world! Seasonal train rides for all ages.",
@@ -233,7 +233,15 @@ namespace :ptourist do
      :lng=>-76.605206,
      :lat=>39.284038}
     ]
-    create_thing thing, organizer, members, images
+    types=[
+        {
+            :name=>"Free boat ride",
+            :notes=>"Free boat rides are available on the hour for VIP pass holders.",
+            :is_vip_pass_required=>true
+        },
+        type_guided_tour
+    ]
+    create_thing thing, organizer, members, images, types
 
     thing={:name=>"Rent-A-Tour",
     :description=>"Professional guide services and itinerary planner in Baltimore, Washington DC, Annapolis and the surronding region",
@@ -253,7 +261,12 @@ namespace :ptourist do
      :priority=>0
      }
     ]
-    create_thing thing, organizer, members, images
+    types=[
+        {
+            :name=>"Free brochure"
+        }
+    ]
+    create_thing thing, organizer, members, images, types
 
     thing={:name=>"Holiday Inn Timonium",
     :description=>"Group friendly located just a few miles north of Baltimore's Inner Harbor. Great neighborhood in Baltimore County",
@@ -276,7 +289,10 @@ namespace :ptourist do
         {
             :name=>"Putt putt golf",
             :notes=>"The putt putt golf course is open between Memorial Day and Labor Day."
-        }
+        },
+        type_jet_ski_rental,
+        type_scooter_rental,
+        type_wheelchair_rental
     ]
     create_thing thing, organizer, members, images, types
 
@@ -308,7 +324,15 @@ namespace :ptourist do
      :lat=>39.2851,
      }
     ]
-    create_thing thing, organizer, members, images
+    types=[
+        {
+            :name=>"IMAX",
+            :notes=>"See the bottom of the ocean in our IMAX theatre."
+        },
+        type_audio_tour,
+        type_wheelchair_rental
+    ]
+    create_thing thing, organizer, members, images, types
 
     thing={:name=>"Hyatt Place Baltimore",
     :description=>"The New Hyatt Place Baltimore/Inner Harbor, located near Fells Point, offers a refreshing blend of style and innovation in a neighborhood alive with cultural attractions, shopping and amazing local restaurants. 
@@ -367,6 +391,14 @@ Work up a sweat in our 24-hour StayFit Gym, which features Life Fitness® cardio
      :lng=>-76.5987, 
      :lat=>39.2847
      }
+    ]
+    types=[
+        {
+            :name=>"StayFit Gym",
+            :notes=>"Open 24-hours."
+        },
+        type_ada_trails,
+        type_wheelchair_rental
     ]
     create_thing thing, organizer, members, images
 

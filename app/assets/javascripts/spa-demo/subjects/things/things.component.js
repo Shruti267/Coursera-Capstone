@@ -254,18 +254,29 @@
   ThingSelectorController.$inject = ["$scope",
                                      "$stateParams",
                                      "spa-demo.authz.Authz",
-                                     "spa-demo.subjects.Thing"];
-  function ThingSelectorController($scope, $stateParams, Authz, Thing) {
+                                     "spa-demo.subjects.Thing",
+                                     "spa-demo.subjects.Type"];
+  function ThingSelectorController($scope, $stateParams, Authz, Thing, Type) {
     var vm=this;
+    vm.selected = null;
 
     vm.$onInit = function() {
       console.log("ThingSelectorController",$scope);
       $scope.$watch(function(){ return Authz.getAuthorizedUserId(); }, 
                     function(){ 
                       if (!$stateParams.id) {
-                        vm.items = Thing.query();        
+                        vm.items = Thing.query();
+                        vm.types = Type.query();
+                        vm.selected = null;
                       }
                     });
+        $scope.$watch(function(){ return vm.selected; },
+            function(){
+                if (!$stateParams.id) {
+                    console.log("New filter:", vm.selected);
+                    vm.items = Thing.query({ type_id: vm.selected});
+                }
+            });
     }
     return;
     //////////////

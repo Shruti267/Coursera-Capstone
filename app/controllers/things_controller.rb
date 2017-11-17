@@ -9,15 +9,31 @@ class ThingsController < ApplicationController
 
   def index
     authorize Thing
-    things = policy_scope(Thing.all)
+    filter=index_params
+    puts "filter"
+    puts filter
+    if (!filter.nil?)
+      begin
+        type_id=filter['type_id'].to_i unless filter['type_id'].blank?
+      rescue
+        # nothing to do
+      end
+      if !type_id.nil?
+        things = Thing.with_type(type_id)
+      end
+    end
+    if things.nil?
+      things=Thing.all
+    end
+    things = policy_scope(things)
     @things = ThingPolicy.merge(things)
   end
 
   def show
     authorize @thing
     things = ThingPolicy::Scope.new(current_user,
-                                    Thing.where(:id=>@thing.id))
-                                    .user_roles(false)
+                                    Thing.where(:id => @thing.id))
+                 .user_roles(false)
     @thing = ThingPolicy.merge(things).first
   end
 
@@ -27,12 +43,12 @@ class ThingsController < ApplicationController
 
     User.transaction do
       if @thing.save
-        role=current_user.add_role(Role::ORGANIZER,@thing)
+        role=current_user.add_role(Role::ORGANIZER, @thing)
         @thing.user_roles << role.role_name
         role.save!
         render :show, status: :created, location: @thing
       else
-        render json: {errors:@thing.errors.messages}, status: :unprocessable_entity
+        render json: {errors: @thing.errors.messages}, status: :unprocessable_entity
       end
     end
   end
@@ -43,7 +59,7 @@ class ThingsController < ApplicationController
     if @thing.update(thing_params)
       head :no_content
     else
-      render json: {errors:@thing.errors.messages}, status: :unprocessable_entity
+      render json: {errors: @thing.errors.messages}, status: :unprocessable_entity
     end
   end
 
@@ -56,13 +72,17 @@ class ThingsController < ApplicationController
 
   private
 
-    def set_thing
-      @thing = Thing.find(params[:id])
-    end
+  def index_params
+    params.permit(:type_id)
+  end
 
-    def thing_params
-      params.require(:thing).tap {|p|
-          p.require(:name) #throws ActionController::ParameterMissing
-        }.permit(:name, :description, :notes)
-    end
+  def set_thing
+    @thing = Thing.find(params[:id])
+  end
+
+  def thing_params
+    params.require(:thing).tap {|p|
+      p.require(:name) #throws ActionController::ParameterMissing
+    }.permit(:name, :description, :notes)
+  end
 end
