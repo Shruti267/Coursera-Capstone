@@ -2,7 +2,7 @@
 source 'https://rubygems.org'
 
 
-gem 'nokogiri', '~> 1.6.8'
+gem 'nokogiri', '~> 1.10.8'
 gem 'bson', '4.2'
 gem 'ffi', '1.12.2'
 
