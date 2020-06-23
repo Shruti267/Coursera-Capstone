@@ -2,14 +2,13 @@
 source 'https://rubygems.org'
 
 
-
 gem 'nokogiri', '~> 1.6.8'
 gem 'bson', '4.2'
 gem 'ffi', '1.12.2'
 
 gem 'rails', '4.2.8'
 gem 'rails-api', '~>0.4', '>=0.4.0'
-gem 'pry-rails', '~>0.3', '>=0.3.4'
+# gem 'pry-rails', '~>0.3', '>=0.3.4'
 gem 'rack-cors', '~>0.4', '>=0.4.0', :require => 'rack/cors'
 gem 'devise_token_auth', '~>0.1', '>=0.1.39'
 gem 'pundit', '~>1.1', '>=1.1.0'
@@ -29,7 +28,7 @@ group :development, :test do
   gem 'tzinfo-data', :platforms=>[:mingw, :mswin, :x64_mingw, :jruby]
   # gem 'sqlite3', '~>1.3', '>=1.3.12'
   gem 'byebug', '~>9.0', '>=9.0.6'
-  gem 'pry-byebug', '~>3.4', '>=3.4.0'
+  # gem 'pry-byebug', '~>3.4', '>=3.4.0'
   gem 'httparty', '~>0.14', '>=0.14.0'
 
   gem 'rspec-rails', '~> 3.5', '>=3.5.2'
@@ -39,8 +38,7 @@ group :development, :test do
   gem 'selenium-webdriver', '~> 2.53', '>=2.53.4'
   gem 'chromedriver-helper', '~>1.0', '>=1.0.0'
   gem 'launchy', '~>2.4', '>=2.4.3'
-  gem 'simplecov', '0.12', :require=>false
-  gem 'figaro'
+  gem 'simplecov', '0.12'
   gem 'public_suffix', '1.5.3'
 end
 
@@ -48,7 +46,7 @@ group :production do
   gem 'rails_12factor', '~>0.0', '>= 0.0.3'
 end
 
-gem 'pg', '~>0.20.0'
+gem 'pg', '~>0.19', '>=0.19.0'
 gem 'puma', '~>3.6', '>=3.6.0', :platforms=>:ruby
 gem 'mongoid', '~>5.1', '>=5.1.5'
 gem 'database_cleaner', '~>1.5', '>=1.5.3'
