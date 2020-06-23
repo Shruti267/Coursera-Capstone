@@ -1,0 +1,45 @@
+<form class="type-form row" name="typeform">
+    <span class="type_id id">{{$ctrl.item.id}}</span>
+    <span class="invalid">{{$ctrl.item.errors.full_messages}}</span>
+    <div class="type-caption row col-lg-12">
+        <label class="col-xs-3">Name:</label>
+        <input class="col-xs-9"
+               name="type-name"
+               ng-model="$ctrl.item.name"
+               ng-readonly="!$ctrl.authz.canUpdate"
+               maxlength="80"
+               pattern=".{3,}" title="3 character minimum for Name"/>
+        <span class="invalid">{{$ctrl.item.errors.name}}</span>
+    </div>
+    <div class="type-controls">
+    <span ng-show="$ctrl.authz.authenticated">
+      <button name="type-create"
+              ng-show="!$ctrl.item.id && $ctrl.authz.canCreate"
+              type="submit"
+              ng-disabled="typeform.$invalid"
+              ng-click="$ctrl.create()">Create Type</button>
+
+      <span ng-show="$ctrl.item.id">
+        <button name="type-update"
+                type="submit"
+                ng-show="$ctrl.authz.canUpdate"
+                ng-disabled="!typeform.$dirty"
+                ng-click="$ctrl.update()">Update Type</button>
+        <!-- button name="type-update"
+                type="submit"
+                ng-show="!$ctrl.authz.canUpdate"
+                ng-disabled="$ctrl.selected_linkables.length==0"
+                ng-click="$ctrl.linkThings()">Link to Things</button -->
+        <button name="type-delete"
+                type="submit"
+                ng-show="$ctrl.authz.canDelete"
+                ng-click="$ctrl.remove()">Delete Type</button>
+      </span>
+    </span>
+        <button name="type-clear"
+                type="submit"
+                ng-show="$ctrl.item.id || typeform.$dirty"
+                ng-click="$ctrl.clear()">Clear Type
+        </button>
+    </div>
+</form>

@@ -1,0 +1,88 @@
+class ThingsController < ApplicationController
+  include ActionController::Helpers
+  helper ThingsHelper
+  before_action :set_thing, only: [:show, :update, :destroy]
+  before_action :authenticate_user!, only: [:create, :update, :destroy]
+  wrap_parameters :thing, include: ["name", "description", "notes"]
+  after_action :verify_authorized
+  after_action :verify_policy_scoped, only: [:index]
+
+  def index
+    authorize Thing
+    filter=index_params
+    puts "filter"
+    puts filter
+    if (!filter.nil?)
+      begin
+        type_id=filter['type_id'].to_i unless filter['type_id'].blank?
+      rescue
+        # nothing to do
+      end
+      if !type_id.nil?
+        things = Thing.with_type(type_id)
+      end
+    end
+    if things.nil?
+      things=Thing.all
+    end
+    things = policy_scope(things)
+    @things = ThingPolicy.merge(things)
+  end
+
+  def show
+    authorize @thing
+    things = ThingPolicy::Scope.new(current_user,
+                                    Thing.where(:id => @thing.id))
+                 .user_roles(false)
+    @thing = ThingPolicy.merge(things).first
+  end
+
+  def create
+    authorize Thing
+    @thing = Thing.new(thing_params)
+
+    User.transaction do
+      if @thing.save
+        role=current_user.add_role(Role::ORGANIZER, @thing)
+        @thing.user_roles << role.role_name
+        role.save!
+        render :show, status: :created, location: @thing
+      else
+        render json: {errors: @thing.errors.messages}, status: :unprocessable_entity
+      end
+    end
+  end
+
+  def update
+    authorize @thing
+
+    if @thing.update(thing_params)
+      head :no_content
+    else
+      render json: {errors: @thing.errors.messages}, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    authorize @thing
+    @thing.destroy
+
+    head :no_content
+  end
+
+  private
+
+  def index_params
+    params.permit(:type_id)
+  end
+
+  def set_thing
+    @thing = Thing.find(params[:id])
+  end
+
+  def thing_params
+    params.require(:thing).tap {|p|
+      p.require(:name) #throws ActionController::ParameterMissing
+    }.permit(:name, :description, :notes)
+  end
+end

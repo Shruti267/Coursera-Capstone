@@ -1,0 +1,14 @@
+div.image-list .id,  div.thing-list .id,  div.type-list .id,
+form.image-form .id, form.thing-form .id, form.type-form .id {
+  display: none;
+}
+
+sd-image-editor form, sd-thing-editor form, sd-type-editor form {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.type-is-vip-pass-required {
+    margin-bottom: 0;
+    margin-top: 0;
+}
