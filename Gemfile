@@ -1,7 +1,13 @@
 # 
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.6'
+
+
+gem 'nokogiri', '~> 1.6.8'
+gem 'bson', '4.2'
+gem 'ffi', '1.12.2'
+
+gem 'rails', '4.2.8'
 gem 'rails-api', '~>0.4', '>=0.4.0'
 gem 'pry-rails', '~>0.3', '>=0.3.4'
 gem 'rack-cors', '~>0.4', '>=0.4.0', :require => 'rack/cors'
@@ -15,13 +21,13 @@ gem 'jquery-rails', '~>4.2', '>=4.2.1'
 gem 'jbuilder', '~> 2.0', '>=2.6.0'
 
 group :development do
-  gem 'spring', '~>2.0', '>=2.0.0'
+  gem 'spring', '~> 1.7'
 end
 
 group :development, :test do
-  gem 'webrick', '~>1.3', '>=1.3.1', :platforms=>[:mingw, :mswin, :x64_mingw, :jruby]
+  gem 'webrick', '1.3.1', :platforms=>[:mingw, :mswin, :x64_mingw, :jruby]
   gem 'tzinfo-data', :platforms=>[:mingw, :mswin, :x64_mingw, :jruby]
-  gem 'sqlite3', '~>1.3', '>=1.3.12'
+  # gem 'sqlite3', '~>1.3', '>=1.3.12'
   gem 'byebug', '~>9.0', '>=9.0.6'
   gem 'pry-byebug', '~>3.4', '>=3.4.0'
   gem 'httparty', '~>0.14', '>=0.14.0'
@@ -33,8 +39,9 @@ group :development, :test do
   gem 'selenium-webdriver', '~> 2.53', '>=2.53.4'
   gem 'chromedriver-helper', '~>1.0', '>=1.0.0'
   gem 'launchy', '~>2.4', '>=2.4.3'
-  gem 'simplecov', '~>0', '>=0.12', :require=>false
+  gem 'simplecov', '0.12', :require=>false
   gem 'figaro'
+  gem 'public_suffix', '1.5.3'
 end
 
 group :production do
@@ -46,7 +53,7 @@ gem 'puma', '~>3.6', '>=3.6.0', :platforms=>:ruby
 gem 'mongoid', '~>5.1', '>=5.1.5'
 gem 'database_cleaner', '~>1.5', '>=1.5.3'
 gem 'factory_girl_rails', '~>4.7', '>=4.7.0'
-gem 'faker', '~>1.6', '>=1.6.6'
+gem 'faker', '1.6.6'
 
 #source 'https://rails-assets.org' do
 source 'http://insecure.rails-assets.org' do
